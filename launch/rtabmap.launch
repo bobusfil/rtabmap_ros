@@ -105,7 +105,9 @@
   <arg name="odom_expected_rate"       default="0"/>
   <arg name="imu_topic"                default="/imu/data"/>          <!-- only used with VIO approaches -->
   <arg name="wait_imu_to_init"         default="false"/>
-  
+  <!-- Filip odom -->
+  <arg name="odom_strategy"    default="0" />
+  <!-- End Filip odom -->
   <arg name="scan_cloud_assembling"              default="false"/>
   <arg name="scan_cloud_assembling_time"         default="1"/>
   <arg name="scan_cloud_assembling_fixed_frame"  default=""/>
@@ -258,6 +260,9 @@
       <remap from="odom"                   to="$(arg odom_topic)"/>
       <remap from="imu"                    to="$(arg imu_topic)"/>
       
+<!-- Filip edit -->
+      <param name="odom_strategy"    type="int"    value="$(arg odom_strategy)" />	
+                                                                
       <param name="frame_id"                    type="string" value="$(arg frame_id)"/>
       <param name="odom_frame_id"               type="string" value="$(arg vo_frame_id)"/>
       <param name="publish_tf"                  type="bool"   value="$(arg publish_tf_odom)"/>

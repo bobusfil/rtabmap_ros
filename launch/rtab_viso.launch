@@ -1,0 +1,111 @@
+<launch>
+<arg name="robot"	default="X1"/>
+<include file="$(find subt_example)/launch/teleop.launch"/>
+<group ns="$(arg robot)">
+	
+
+	<node name="odom_setter" pkg="subt_virtual" type="odom_setter">
+            <rosparam>
+                pose_cov_diag: [.1, .1, .1, .1, .1, .1]
+                twist_cov_diag: [.1, .1, .1, .1, .1, .1]
+            </rosparam>
+            <remap from="input" to="odom"/>
+            <remap from="output" to="uncertain_odom"/>
+        </node>
+
+        <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
+            <param name="output_frame" value="$(arg robot)/imu_odom"/>
+            <!--
+            According to docs base_fooprint should be used.
+            TODO: Create and use $(arg robot)/base_fooprint frame?
+            <param name="base_footprint_frame" value="$(arg robot)/base_footprint"/>
+            <param name="base_footprint_frame" value="$(arg robot)/base_link"/>
+
+            NB: Need to use robot frame like X1, pose publisher then publishes
+            X1->X1/base_link transform. Some robot links seems to be directly
+            below X1 frame.
+            -->
+            <param name="base_footprint_frame" value="$(arg robot)"/>
+            <param name="freq" value="20.0"/>
+            <param name="sensor_timeout" value="1.0"/>
+            <param name="odom_used" value="true"/>
+            <param name="imu_used" value="true"/>
+            <param name="vo_used" value="false"/>
+
+            <remap from="odom" to="uncertain_odom"/>
+            <remap from="imu_data" to="imu/data"/>
+            <remap from="~odom_combined" to="imu_pose"/>
+        </node>
+
+
+
+
+	<group ns="rtabmap">
+	  <group ns="icp_odometry">
+		<param name="scan_normal_k" value="9"/>
+		<param name="scan_normal_radius" value="0"/>
+	  </group>
+	</group>
+
+
+  <include file="$(dirname)/rtabmap.launch">
+	<arg name="rtabmapviz"              value="true" /> 
+  	<arg name="rviz"                    value="false" />
+	
+<!-- Deleting previous maps -->
+	  <arg name="rtabmap_args" value="--delete_db_on_start"/>
+
+
+<!-- Selecting the odometry strategy -->
+<!-- 
+0 F2M (default) - funguje
+1 F2F - funguje
+2 Fovis
+3 viso
+4 DVO-SLAM
+5 ORB_SLAM2
+6 Okvis
+7 LOAM
+8 MSCFK_VIO
+9 VINS-Fusion
+-->
+	  <arg name="odom_strategy"    value="3" /> 
+
+<!-- starting icp_odometry node -->
+	  <arg name="depth"  		       value="false"/>
+	  <arg name="icp_odometry"             value="true"/>
+
+<!-- Setting topics -->
+	  <arg name="subscribe_scan"          value="false"/>
+	  <arg name="scan_topic"              value="scan"/>
+	  <arg name="subscribe_scan_cloud"    value="true"/>
+	  <arg name="scan_cloud_topic"        value="/$(arg robot)/points_slow_filtered"/>
+	  <arg name="subscribe_scan_descriptor" value="false"/>
+	  <arg name="scan_descriptor_topic"   value="scan_descriptor"/>
+	  <arg name="scan_cloud_max_points"   value="0"/>
+	  <arg name="scan_cloud_filtered"     value="false"/>
+	  
+<!-- Message sync -->
+	  <arg name="approx_sync" value="false"/>
+
+<!-- Setting frames -->
+
+	<!-- Frames for visualizer and rtabmap SLAM -->
+	<arg name="map_frame_id"            value="$(arg robot)/map"/>
+	<arg name="odom_frame_id"            value="$(arg robot)/odom"/>
+
+	<!-- Frames for icp_odometry -->
+	<arg name="frame_id"                value="$(arg robot)"/>
+  	<arg name="vo_frame_id"             value="$(arg robot)/odom"/> <!-- Visual/Icp odometry frame ID for TF -->
+	<arg name="odom_guess_frame_id"        value="$(arg robot)/imu_odom"/>	
+	<arg name="odom_topic"              value="/$(arg robot)/odom"/>          <!-- Odometry topic name -->
+
+	
+	 
+ 	
+
+	 
+</include>
+
+</group>
+</launch>

@@ -336,7 +336,18 @@ void OdometryROS::onInit()
 
 	this->updateParameters(parameters_);
 
-	odometry_ = Odometry::create(parameters_);
+	ROS_INFO("Filip");
+	int od_strat;
+	if (pnh.getParam("odom_strategy",od_strat)){
+	    ROS_INFO("Got param: %d", od_strat);
+        Odometry::Type strategy_type = static_cast<Odometry::Type>(od_strat);
+        odometry_ = Odometry::create(strategy_type, parameters_);
+	} else {
+	    ROS_ERROR("Failed to get param 'odom_strategy'");
+	    ROS_WARN("Proceeding with the default Odometry strategy using simple Odometry::create(parameters_) function");
+        odometry_ = Odometry::create(parameters_);
+	}
+
 	if(!initialPose.isIdentity())
 	{
 		odometry_->reset(initialPose);
