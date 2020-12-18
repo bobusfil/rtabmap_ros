@@ -32,8 +32,8 @@ find_package(find_object_2d)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 find_package(RTABMap 0.20.5 REQUIRED)
-
 find_package(OpenCV REQUIRED)
+find_package(Pangolin REQUIRED)
 
 IF(RTABMAP_GUI)
 FIND_PACKAGE(PCL 1.7 REQUIRED QUIET COMPONENTS common io kdtree search surface filters registration sample_consensus segmentation visualization)
@@ -183,6 +183,9 @@ include_directories(
   ${OpenCV_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
+  ${Pangolin_INCLUDE_DIRS}
+  $ENV{ORB_SLAM2_ROOT_DIR}/Thirdparty/g2o/lib/
+  
 )
 
 # libraries
@@ -191,6 +194,7 @@ SET(Libraries
    ${PCL_LIBRARIES}
    ${catkin_LIBRARIES}
    ${RTABMap_LIBRARIES}
+   ${g2o_LIBRARIES}
 )
  
 SET(rtabmap_sync_lib_src
@@ -291,6 +295,7 @@ target_link_libraries(rtabmap_sync
 )
 target_link_libraries(rtabmap_ros
   ${Libraries}
+  ${Pangolin_LIBRARIES}
 )
 target_link_libraries(rtabmap_plugins
   rtabmap_ros
