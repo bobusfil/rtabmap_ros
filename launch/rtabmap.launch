@@ -1,5 +1,7 @@
 
 <launch>
+  <!-- FILIP EDIT adding env variable which hints location of Thirdparty libs (g2o and DBoW2) to the nodes at runtime -->
+  <env name="LD_LIBRARY_PATH"  value="$(find ORB_SLAM2)/Thirdparty/g2o/lib:$(find ORB_SLAM2)/Thirdparty/DBoW2/lib:$(optenv LD_LIBRARY_PATH):"/>
   <!-- Convenience launch file to launch odometry, rtabmap and rtabmapviz nodes at once -->
 
   <!-- For stereo:=false

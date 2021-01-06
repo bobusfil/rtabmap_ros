@@ -167,7 +167,7 @@ catkin_package(
                  image_transport tf tf_conversions tf2_ros eigen_conversions laser_geometry pcl_conversions 
                  pcl_ros nodelet dynamic_reconfigure message_filters class_loader rosgraph_msgs
                  stereo_msgs move_base_msgs image_geometry ${optional_dependencies}
-  DEPENDS RTABMap OpenCV
+  DEPENDS RTABMap OpenCV 
 )
 
 ###########
@@ -184,8 +184,6 @@ include_directories(
   ${PCL_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${Pangolin_INCLUDE_DIRS}
-  $ENV{ORB_SLAM2_ROOT_DIR}/Thirdparty/g2o/lib/
-  
 )
 
 # libraries
@@ -194,7 +192,6 @@ SET(Libraries
    ${PCL_LIBRARIES}
    ${catkin_LIBRARIES}
    ${RTABMap_LIBRARIES}
-   ${g2o_LIBRARIES}
 )
  
 SET(rtabmap_sync_lib_src
